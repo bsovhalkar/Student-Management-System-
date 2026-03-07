@@ -8,27 +8,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/students")
+@RestController
 public class StudentController {
     @Autowired
      StudentServiceImp studentServiceImp;
-    public StudentController(StudentServiceImp studentServiceImp) {}
+    public StudentController(StudentServiceImp studentServiceImp) {
+        this.studentServiceImp = studentServiceImp;
+    }
     public StudentController() {}
 
     @GetMapping("/")
-    public List<Student> findAll() {
-//        studentServiceImp.getAllStudents();
-        return studentServiceImp.getAllStudents();
+    public ResponseEntity<List<Student>> findAll() {
+//
+        List<Student> allStudents = studentServiceImp.getAllStudents();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(allStudents);
     }
 
     @PostMapping("/")
-    public Student addStudent(@RequestBody Student student) {
+    public ResponseEntity<?> addStudent(@RequestBody Student student) {
         studentServiceImp.createStudent(student);
-        return student;
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(student);
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable Long id) {
